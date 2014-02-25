@@ -1,0 +1,7 @@
+{
+  "couch": "http://localhost:5984",
+  "admins": {
+    "localhost": "test:test123123"
+  },
+  "section": "vhosts"
+}
