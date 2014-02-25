@@ -14,7 +14,7 @@
     "node": "0.10.x"
   },
   "dependencies": {
-    "splice-auth": "0.0.3",
+    "splice-auth": "~0.0.4",
     "request": "^2.34.0"
   },
   "devDependencies": {
