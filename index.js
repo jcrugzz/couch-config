@@ -19,12 +19,14 @@ function CouchConfig (opts, callback) {
   this.admins = opts.admins || {};
   this.section = opts.section || 'vhosts';
   this.route = '/_config/' + this.section;
+  this.modifier = opts.modifier || null;
   this._callback = callback && typeof callback === 'function'
     ? callback
     : undefined;
 
   this.returned = false;
   if (!this._callback) { throw new Error('Must provide callback') }
+  if (!this.modifier) { throw new Error('Must provide modifier function') }
 
   //
   // Splice in auth based on whats passed in
@@ -73,19 +75,12 @@ CouchConfig.prototype.modify = function (couch, err, res, body) {
     return this.error(err || new Error('fetch request failed for particular config value '
                                       + res.statusCode));
   }
-  var obj = Object.keys(body).reduce(function (acc, key) {
-    //
-    // TODO: this will be generic and be WAY more variable with detection and
-    // shit for what we are getting back and if its a section get or if its
-    // a single key or whatever
-    //
-    var pieces = body[key].split('/');
-    pieces[pieces.length - 2] = 'app';
-    acc[key] = pieces.join('/');
-    return acc;
-  }, {});
+  //
+  // TODO: Make this safer because this is totally foot-gun material
+  //
+  var value = this.modifier(body);
 
-  this.updateObj(couch, obj);
+  this.updateObj(couch, value);
 };
 
 CouchConfig.prototype.updateObj = function (couch, config) {
